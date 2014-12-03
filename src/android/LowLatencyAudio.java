@@ -63,14 +63,23 @@ public class LowLatencyAudio extends CordovaPlugin {
 			audioID = data.getString(0);
 			if (!soundMap.containsKey(audioID)) {
 				String assetPath = data.getString(1);
-				String fullPath = assetPath;
+				//String fullPath = assetPath;
 				
 				//Log.d(LOGTAG, "preloadFX - " + audioID + ": " + assetPath);
-
-				Context ctx = cordova.getActivity().getApplicationContext();
-				AssetManager am = ctx.getResources().getAssets();
-				AssetFileDescriptor afd = am.openFd(fullPath);
-				int assetIntID = soundPool.load(afd, 1);
+				int assetIntID = 0;
+				if(assetPath.startsWith("/")){
+				    assetIntID = soundPool.load(assetPath,1);
+				else {
+				    Context ctx = cordova.getActivity().getApplicationContext();
+				    AssetManager am = ctx.getResources().getAssets();
+				    AssetFileDescriptor afd = am.openFd("www/" + assetPath);
+				    assetIntID = soundPool.load(afd, 1);
+				}
+				
+				//Context ctx = cordova.getActivity().getApplicationContext();
+				//AssetManager am = ctx.getResources().getAssets();
+				//AssetFileDescriptor afd = am.openFd(fullPath);
+				//int assetIntID = soundPool.load(afd, 1);
 				soundMap.put(audioID, assetIntID);
 			} else {
 				return new PluginResult(Status.ERROR, ERROR_AUDIOID_EXISTS);
